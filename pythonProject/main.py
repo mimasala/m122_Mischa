@@ -115,11 +115,12 @@ clear_temp_files()
 
 random_anime = get_random_anime()
 
-report = build_report.build_report(random_anime, "template/report_template.html")
-simpleReport = build_report.build_report(random_anime, "template/simple_report_template.html")
-pdf_report.generate_report_pdf(simpleReport, "simple_report.pdf")
+report = build_report.build_report(random_anime, "template/report_template.j2")
+simpleReport = build_report.build_report(random_anime, "template/simple_report_template.j2")
+# pdf_report.generate_report_pdf(simpleReport, "simple_report.pdf")
 print(report)
-
+print("-----------------------------------------------------")
+print(simpleReport)
 logging.info("Created report HTML"+currentDateTime())
 
 
