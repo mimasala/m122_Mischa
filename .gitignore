@@ -1,2 +1,4 @@
 pythonProject/.env.secret
 .idea
+pythonProject/*.log
+__pycache__

@@ -1,0 +1,37 @@
+query DefaultRequest ($random: Int) {
+    Page(page: $random, perPage: 1) {
+        pageInfo {
+            total
+        }
+        media(type: ANIME, isAdult: false, status_not: NOT_YET_RELEASED) {
+            id,
+            title {
+                romaji,
+                english,
+                native,
+            }
+            bannerImage,
+            coverImage {
+                medium,
+                color,
+            },
+            genres,
+            description,
+            characters{
+                edges{
+                    node{
+                        id,
+                        name{
+                            full
+                        },
+                        image{
+                            medium
+                        },
+                        description(asHtml: true),
+                        age,
+                    }
+                }
+            },
+        }
+    }
+}

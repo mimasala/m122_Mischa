@@ -1,0 +1,9 @@
+files:
+  templates:
+    CharacterCard: "template/CharacterCard.j2"
+    reportTemplate: "template/report_template.j2"
+    simpleReportTemplate: "template/simple_report_template.j2"
+api:
+  url: "https://graphql.anilist.co"
+runtime:
+  dir: "runtimeFiles/"

@@ -1,0 +1,100 @@
+schema {
+    query: Query
+}
+
+type Query {
+    Page(page:Int, perPage:Int): [Page]
+}
+type Page{
+    pageInfo: PageInfo
+    media(type: MediaType, isAdult:Boolean, status_not: MediaStatus): [Media]
+}
+type PageInfo{
+    total: Int
+    perPage: Int
+    currentPage: Int
+    totalPages: Int
+}
+type Media{
+    id: Int!
+    title: MediaTitle
+    type: MediaType
+    description(asHtml: Boolean): String
+    seasonYear: Int
+    seasonInt: Int
+    episodes: Int
+    duration: Int
+    chapters: Int
+    volumes: Int
+    isLicensed: Boolean
+    hashtag: String
+    updatedAt: Int
+    coverImage: MediaCoverImage
+    bannerImage: String
+    genres: [String]
+    synonyms: [String]
+    averageScore: Int
+    meanScore: Int
+    popularity: Int
+    isLocked: Boolean
+    trending: Int
+    favourites: Int
+    isFavourite: Boolean!
+    isFavouriteBlocked: Boolean!
+    isAdult: Boolean
+    siteUrl: String
+    autoCreateForumThread: Boolean
+    isRecommendationBlocked: Boolean
+    isReviewBlocked: Boolean
+    modNotes: String
+    characters:CharacterConnection
+}
+type CharacterConnection{
+    edges: [CharacterEdge]
+    nodes: [Character]
+    pageInfo: PageInfo
+}
+type CharacterEdge{
+    node: Character
+    cursor: String
+}
+type Character{
+    id: Int!
+    name: CharacterName
+    image: CharacterImage
+    description(asHtml: Boolean): String
+    media(type: MediaType, isAdult:Boolean, status_not: MediaStatus): [Media]
+    age:String
+}
+type CharacterImage{
+    large: String
+    medium: String
+}
+type CharacterName{
+    first: String
+    last: String
+    full:String
+}
+type MediaCoverImage{
+    large: String
+    medium: String
+    color: String
+}
+type MediaTitle {
+    romaji: String
+    english: String
+    native: String
+    userPreferred: String
+}
+enum MediaType {
+    ANIME
+    MANGA
+}
+enum MediaStatus{
+    FINISHED
+    RELEASING
+    NOT_YET_RELEASED
+    CANCELLED
+    HIAIUS
+}
+

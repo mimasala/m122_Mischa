@@ -1,7 +1,6 @@
 import datetime
 import json
 import requests
-import os
 import shutil
 from PIL import Image
 import os
@@ -21,27 +20,19 @@ def currentDateTime():
 def render_template(filename, myJSONObj):
     return env.get_template(filename).render(
         title=
-        myJSONObj["title"]["romaji"] if myJSONObj["title"]["romaji"] != "None" else
-        myJSONObj["title"]["english"] if myJSONObj["title"]["english"] != "None" else
-        myJSONObj["title"]["native"],
+        myJSONObj["title"]["romaji"]+" - "+myJSONObj["title"]["english"]+" - "+myJSONObj["title"]["native"],
+        # ["romaji"] if myJSONObj["title"]["romaji"] != "None" else
+        # myJSONObj["title"]["english"],
         description=myJSONObj["description"],
-        coverImage=get_filename(myJSONObj["coverImage"]["medium"]),
-        bannerImage=get_filename(myJSONObj["bannerImage"]),
+        coverImage=myJSONObj["coverImage"]["medium"],
+        bannerImage=myJSONObj["bannerImage"],
         genres=myJSONObj["genres"],
-        character_cards=character_to_html("template/CharacterCard.html", myJSONObj),
+        character_cards=character_to_html("template/CharacterCard.j2", myJSONObj),
         background_color=myJSONObj["coverImage"]["color"],
         current_date=str(currentDateTime()),
         anime_id=myJSONObj["id"],
-        banner_has_overlay="block" if myJSONObj["bannerImage"] != "None" else "None",
+        banner_has_overlay="block" if myJSONObj["bannerImage"] != "None" else "none",
     )
-
-
-def get_filename(url):
-    return "/runtimeFiles/" + url.split("/")[-1]
-
-
-def is_jpg(filename):
-    return filename.endswith(".jpg")
 
 
 def download_images(myJSONObj):
@@ -84,7 +75,8 @@ def download_image(url, img_type):
 
 def build_report(response, file):
     response = json_values_to_string(response)
-    download_images(response)
+    # download_images(response)
+    print(json.dumps(response, indent=2))
     return render_template(file, response)
 
 
@@ -92,29 +84,18 @@ def json_values_to_string(myJSONObj):
     return json.loads(json.dumps(myJSONObj).replace("null", '"None"'))
 
 
-# def map_json_to_html(myJSONObj):
-#     return {
-#         "{{title}}":
-#         myJSONObj["title"]["romaji"] if myJSONObj["title"]["romaji"] != "None" else
-#         myJSONObj["title"]["english"] if myJSONObj["title"]["english"] != "None" else
-#         myJSONObj["title"]["native"],
-#         "{{description}}": myJSONObj["description"],
-#         "{{coverImage}}": get_filename(myJSONObj["coverImage"]["medium"]),
-#         "{{bannerImage}}": get_filename(myJSONObj["bannerImage"]),
-#         "{{genres}}": myJSONObj["genres"],
-#         "{{character_cards}}": character_to_html(myJSONObj),
-#         "{{background_color}}": myJSONObj["coverImage"]["color"],
-#         "{{current_date}}": str(currentDateTime()),
-#         "{{anime_id}}": myJSONObj["id"],
-#         "{{banner_has_overlay}}": "block" if myJSONObj["bannerImage"] != "None" else "None",
-#     }
-#
-#
 def character_to_html(filename, myJSONObj):
+    html = ""
+    for character in myJSONObj["characters"]["edges"]:
+        html += render_character_template(filename, character["node"])
+    return html
+
+
+def render_character_template(filename, myJSONObj):
     return env.get_template(filename).render(
-        character_id=myJSONObj["characters"]["edges"][0]["node"]["id"],
-        character_name=myJSONObj["characters"]["edges"][0]["node"]["name"]["full"],
-        character_image=get_filename(myJSONObj["characters"]["edges"][0]["node"]["image"]["medium"]),
-        character_description=myJSONObj["characters"]["edges"][0]["node"]["description"],
-        character_age=myJSONObj["characters"]["edges"][0]["node"]["age"],
+        character_id=myJSONObj["id"],
+        character_name=myJSONObj["name"]["full"],
+        character_image=myJSONObj["image"]["medium"],
+        character_description=myJSONObj["description"],
+        character_age=myJSONObj["age"],
     )
