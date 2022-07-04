@@ -3,7 +3,7 @@ query DefaultRequest ($random: Int) {
         pageInfo {
             total
         }
-        media(type: ANIME, isAdult: false, status_not: NOT_YET_RELEASED) {
+        media(type: ANIME, status_not: NOT_YET_RELEASED) {
             id,
             title {
                 romaji,

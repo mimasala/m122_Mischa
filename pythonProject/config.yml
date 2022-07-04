@@ -1,4 +1,6 @@
 files:
+  pdf:
+    name:
   templates:
     CharacterCard: "template/CharacterCard.j2"
     reportTemplate: "template/report_template.j2"
@@ -7,3 +9,9 @@ api:
   url: "https://graphql.anilist.co"
 runtime:
   dir: "runtimeFiles/"
+email:
+  from:
+  to:
+  subject:
+  sendgrid:
+    api_key:

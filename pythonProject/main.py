@@ -24,7 +24,7 @@ def currentDateTime(isfile: bool = False):
         else datetime.datetime.now().strftime("%Y-%m-%d")
 
 
-# initialize config and environment variables
+# initialize config and environment variables and project files
 logging.basicConfig(filename="request.log", level=logging.INFO)
 env = {
     **dotenv_values(".env.shared"),
@@ -33,17 +33,25 @@ env = {
 with open(env["config"]) as file:
     proj_config = yaml.load(file, Loader=yaml.FullLoader)
     file.close()
-logging.info("Starting... "+currentDateTime())
+logging.info("Starting... " + currentDateTime())
+sendgrid_api_key = os.environ["SENDGRID_API_KEY"] if "SENDGRID_API_KEY" in os.environ \
+    else proj_config['email']['sendgrid']['api_key'] if "sendgrid" in proj_config['email'] \
+    else None
+if sendgrid_api_key is None:
+    logging.error("Sendgrid API key not found")
+    exit(1)
+logging.info("Sendgrid API key found")
+
+for f in os.listdir(proj_config['runtime']['dir']):
+    file_path = os.path.join(proj_config['runtime']['dir'], f)
+    try:
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+    except Exception as e:
+        logging.error(f"{currentDateTime()}: {e}")
 
 
-def clear_temp_files():
-    for f in os.listdir(proj_config['runtime']['dir']):
-        file_path = os.path.join(proj_config['runtime']['dir'], f)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            logging.error(f"{currentDateTime()}: {e}")
+# end initialize config and environment variables and project files
 
 
 def set_and_get_current_id(lastId: int):
@@ -99,24 +107,24 @@ def create_attachment(fileName):
     )
 
 
-clear_temp_files()
-
+# execution starts here
 random_anime = get_random_anime()
 
 report = build_report.build_report(random_anime, proj_config['files']['templates']['reportTemplate'])
 print(json.dumps(random_anime, indent=2))
 simpleReport = build_report.build_report(random_anime, proj_config['files']['templates']['simpleReportTemplate'])
-pdf_report_fileName = f"{proj_config['runtime']['dir']}{currentDateTime(True)}_simple_report.pdf"
+pdf_report_fileName = f"{proj_config['runtime']['dir']}{currentDateTime(True)}_simple_report.pdf" \
+    if proj_config["files"]["pdf"]["name"] is None else proj_config["files"]["pdf"]["name"]
 pdf_report.generate_report_pdf(simpleReport, pdf_report_fileName)
 
-logging.info("Created report HTML"+currentDateTime())
+logging.info("Created report HTML" + currentDateTime())
 
 email_sender.send_email(
-    env["email_to"],
-    "API Report",
+    proj_config['email']['to'] if proj_config['email']["to"] is not None else env['email_to'],
+    "API Report" if proj_config['email']['subject'] is None else proj_config['email']['subject'],
     report,
-    env["SENDGRID_API_KEY"],
+    sendgrid_api_key,
     [create_attachment(pdf_report_fileName)]
 )
 
-logging.info("Finished... "+currentDateTime())
+logging.info("Finished... " + currentDateTime())
