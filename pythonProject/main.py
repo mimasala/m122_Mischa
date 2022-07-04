@@ -34,8 +34,8 @@ with open(env["config"]) as file:
     proj_config = yaml.load(file, Loader=yaml.FullLoader)
     file.close()
 logging.info("Starting... " + currentDateTime())
-sendgrid_api_key = os.environ["SENDGRID_API_KEY"] if "SENDGRID_API_KEY" in os.environ \
-    else proj_config['email']['sendgrid']['api_key'] if "sendgrid" in proj_config['email'] \
+sendgrid_api_key = env["SENDGRID_API_KEY"] if env["SENDGRID_API_KEY"] is not None \
+    else proj_config['email']['sendgrid']['api_key'] if proj_config['email']['sendgrid']['api_key'] is not None \
     else None
 if sendgrid_api_key is None:
     logging.error("Sendgrid API key not found")
