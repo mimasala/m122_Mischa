@@ -13,6 +13,7 @@ env = Environment(loader=FileSystemLoader(current_directory))
 templates = glob.glob('*.j2')
 
 
+# format date and time
 def currentDateTime():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -35,6 +36,7 @@ def render_template(filename, myJSONObj):
     )
 
 
+# image downloader (not used)
 def download_images(myJSONObj):
     if myJSONObj["bannerImage"] != "None":
         download_image(myJSONObj["bannerImage"], "banner")
@@ -45,6 +47,7 @@ def download_images(myJSONObj):
             download_image(character["node"]["image"]["medium"], "character")
 
 
+# image downloader (not used)
 def download_image(url, img_type):
 
     if img_type == "banner":
@@ -73,17 +76,19 @@ def download_image(url, img_type):
         return True
 
 
+# main report generator
 def build_report(response, file):
     response = json_values_to_string(response)
     # download_images(response)
-    print(json.dumps(response, indent=2))
     return render_template(file, response)
 
 
+# makes sure that all values are strings
 def json_values_to_string(myJSONObj):
     return json.loads(json.dumps(myJSONObj).replace("null", '"None"'))
 
 
+# main character card generator
 def character_to_html(filename, myJSONObj):
     html = ""
     for character in myJSONObj["characters"]["edges"]:
@@ -91,6 +96,7 @@ def character_to_html(filename, myJSONObj):
     return html
 
 
+# replace character card template with character data
 def render_character_template(filename, myJSONObj):
     return env.get_template(filename).render(
         character_id=myJSONObj["id"],

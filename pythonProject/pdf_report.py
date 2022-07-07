@@ -1,6 +1,7 @@
 from xhtml2pdf import pisa
 
 
+# generates PDF in runtimeFiles folder
 def generate_report_pdf(source_html, output_filename):
     result_file = open(output_filename, "w+b")
     pisa_status = pisa.CreatePDF(
@@ -10,4 +11,3 @@ def generate_report_pdf(source_html, output_filename):
     )
     result_file.close()
     return pisa_status.err
-

@@ -2,6 +2,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import (Mail, Attachment, Content)
 
 
+# send email with attachment
 def send_email(email, subject, message, api_key, Attachments=None):
     mailMessage = Mail(
         from_email='mytallmusic@gmail.com',

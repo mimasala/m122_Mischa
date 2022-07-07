@@ -15,3 +15,7 @@ email:
   subject:
   sendgrid:
     api_key:
+ftp:
+  username: 'swordshop_hello'
+  password: 'w8qsPcGYwgcjbk3l'
+  host: 'swordshop.bplaced.net'
